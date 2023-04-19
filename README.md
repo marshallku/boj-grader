@@ -1,6 +1,6 @@
 # Python [BOJ](https://www.acmicpc.net/) Grader
 
-A cli tool to grade solution
+A cli tool to test if your python code prints expected output as a given input.
 
 ## Usage
 
