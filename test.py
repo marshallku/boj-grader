@@ -15,7 +15,7 @@ def test():
     for file in sorted(os.listdir(path_in)):
         output_file = f"{path_out}/{file}"
 
-        # Skip path is not file, or it's hidden
+        # Skip if path is not a file, or it's hidden
         if not os.path.isfile(output_file) or file[0] == '.':
             continue
 
