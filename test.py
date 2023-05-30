@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 
-mode = 'cpp'
+mode = sys.argv[1]
 
 
 def run_cpp_file(input_data):
