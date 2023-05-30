@@ -1,6 +1,7 @@
 import requests
 import re
 import os
+import sys
 
 
 def get_file_group(n):
@@ -16,7 +17,9 @@ def clear_files_with_extension(directory, extension):
 
 def main():
     # Convert to int just for validating input
-    problem_id = int(input("Problem ID: "))
+    system_problem_id = sys.argv[1]
+    problem_id = int(system_problem_id) if system_problem_id else int(
+        input("Problem ID: "))
 
     # Clear every txt files
     current_path = os.getcwd()
