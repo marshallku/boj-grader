@@ -27,7 +27,7 @@ def run_cpp_file(input_data):
         print(runtime_errors.decode('utf-8'))
         return None
 
-    return output.decode('utf-8')
+    return output.decode('utf-8').rstrip()
 
 
 def run_python_file(input_data):
