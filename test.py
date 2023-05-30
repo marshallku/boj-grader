@@ -2,8 +2,46 @@ import sys
 import os
 import subprocess
 
+mode = 'cpp'
 
-def test():
+
+def run_cpp_file(input_data):
+    output_file = './a.out'
+    process = subprocess.Popen(
+        ['g++', 'solution.cpp'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, compile_errors = process.communicate()
+
+    if compile_errors:
+        print("Compilation Error:")
+        print(compile_errors.decode('utf-8'))
+        return None
+
+    process = subprocess.Popen(
+        ['./a.out'], stdin=input_data, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, runtime_errors = process.communicate()
+
+    os.remove(output_file)
+
+    if runtime_errors:
+        print("Runtime Error:")
+        print(runtime_errors.decode('utf-8'))
+        return None
+
+    return output.decode('utf-8')
+
+
+def run_python_file(input_data):
+    process = subprocess.run(
+        ["python3", "solution.py"],
+        input=input_data,
+        capture_output=True,
+        encoding='utf-8',
+    )
+
+    return process.stdout.rstrip()
+
+
+def main():
     current_path = os.getcwd()
     path_in = f"{current_path}/input"
     path_out = f"{current_path}/output"
@@ -22,19 +60,12 @@ def test():
         print(f"Running case {i}...")
 
         with open(f"{path_in}/{file}", 'r') as f:
-            input_data = f.read()
+            actual_output = run_cpp_file(
+                f)if mode == 'cpp' else run_python_file(f.read())
 
         expected_output = open(
             output_file, 'rt', encoding='utf-8').read().rstrip()
 
-        process = subprocess.run(
-            ["python3", "solution.py"],
-            input=input_data,
-            capture_output=True,
-            encoding='utf-8',
-        )
-
-        actual_output = process.stdout.rstrip()
         passed = actual_output == expected_output
 
         # Remove previous line
@@ -52,4 +83,4 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    main()
