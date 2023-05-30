@@ -6,9 +6,9 @@ mode = sys.argv[1]
 
 
 def run_cpp_file(input_data):
-    output_file = './a.out'
+    output_file = 'tmp.out'
     process = subprocess.Popen(
-        ['g++', 'solution.cpp'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ['g++', 'solution.cpp', '-o', output_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     _, compile_errors = process.communicate()
 
     if compile_errors:
@@ -17,7 +17,7 @@ def run_cpp_file(input_data):
         return None
 
     process = subprocess.Popen(
-        ['./a.out'], stdin=input_data, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        [f"./{output_file}"], stdin=input_data, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, runtime_errors = process.communicate()
 
     os.remove(output_file)

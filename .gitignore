@@ -1,5 +1,5 @@
 input/*.txt
 output/*.txt
-a.out
+*.out
 solution.cpp
 solution.py
