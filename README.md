@@ -13,6 +13,6 @@ Requirements: g++, python3
     - It removes old test cases and creates new cases.
     - You can add test cases by adding `input/$FILE_NAME` and `output/$FILE_NAME`.
 2. Write your solution in `solution.cpp` or `solution.py`.
-3. Run `./test` to test your code.
+3. Run `./test.sh` to test your code.
     - It tries to run C++ by default.
-    - You can specify language with -l argument like `./test -l cpp(or c++)` or `./test.sh -l py(or python)`
+    - You can specify language with -l argument like `./test.sh -l cpp(or c++)` or `./test.sh -l py(or python)`
