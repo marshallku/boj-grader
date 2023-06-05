@@ -32,6 +32,8 @@ jobs:
               with:
                   python-version: "3.11"
                   check-latest: true
+                  cache: "pip"
+            - run: pip install -r requirements.txt
             - uses: egor-tensin/setup-gcc@v1
               with:
                   version: latest
