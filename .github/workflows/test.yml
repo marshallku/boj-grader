@@ -13,6 +13,8 @@ jobs:
             status: ${{ steps.check-diff.outputs.status }}
         steps:
             - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
             - name: Check committed files
               id: check-diff
               run: bash .github/scripts/diff-check.sh ${{ github.sha }} "$GITHUB_OUTPUT"
@@ -24,6 +26,8 @@ jobs:
         if: ${{ needs.check-file.outputs.status == 'TRUE' }}
         steps:
             - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
             - uses: actions/setup-python@v4
               with:
                   python-version: "3.11"
