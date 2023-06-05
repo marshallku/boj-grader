@@ -15,6 +15,13 @@ def clear_files_with_extension(directory, extension):
             os.remove(file_path)
 
 
+def create_folder_if_not_exists(path):
+    if os.path.exists(path):
+        return
+
+    os.makedirs(path)
+
+
 def main():
     # Convert to int just for validating input
     system_problem_id = sys.argv[1]
@@ -25,6 +32,8 @@ def main():
     current_path = os.getcwd()
     path_in = f"{current_path}/input"
     path_out = f"{current_path}/output"
+    create_folder_if_not_exists(path_in)
+    create_folder_if_not_exists(path_out)
     clear_files_with_extension(path_in, '.txt')
     clear_files_with_extension(path_out, '.txt')
 
