@@ -6,7 +6,7 @@ readarray -t diffs <<<"$diff_output"
 file_pattern='[0-9]+/solution\.(py|cpp)'
 
 for file in "${diffs[@]}"; do
-    if [[ "$file" =~ $file_pattern ]]; then
+    if [[ "$file" =~ $file_pattern && -f "$file" ]]; then
         echo 'status=TRUE' >>"$GITHUB_OUTPUT"
         exit 0
     fi
