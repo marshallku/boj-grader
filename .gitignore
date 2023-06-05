@@ -1,5 +1,5 @@
 input
 output
 *.out
-solution.cpp
-solution.py
+/solution.cpp
+/solution.py

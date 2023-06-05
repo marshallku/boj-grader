@@ -24,14 +24,14 @@ def create_folder_if_not_exists(path):
 
 def main():
     # Convert to int just for validating input
-    system_problem_id = sys.argv[1]
+    _, system_problem_id, path = sys.argv
     problem_id = int(system_problem_id) if system_problem_id else int(
         input("Problem ID: "))
 
     # Clear every txt files
-    current_path = os.getcwd()
-    path_in = f"{current_path}/input"
-    path_out = f"{current_path}/output"
+    target_path = f"{os.getcwd()}{'/' + path if path else ''}"
+    path_in = f"{target_path}/input"
+    path_out = f"{target_path}/output"
     create_folder_if_not_exists(path_in)
     create_folder_if_not_exists(path_out)
     clear_files_with_extension(path_in, '.txt')

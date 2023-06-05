@@ -2,13 +2,13 @@ import sys
 import os
 import subprocess
 
-mode = sys.argv[1]
+_, mode, path = sys.argv
 
 
-def run_cpp_file(input_data):
-    output_file = 'tmp.out'
+def run_cpp_file(input_data, directory):
+    output_file = f"{directory}tmp.out"
     process = subprocess.Popen(
-        ['g++', 'solution.cpp', '-o', output_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ['g++', f"{directory}solution.cpp", '-o', output_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     _, compile_errors = process.communicate()
 
     if compile_errors:
@@ -30,9 +30,9 @@ def run_cpp_file(input_data):
     return output.decode('utf-8').rstrip()
 
 
-def run_python_file(input_data):
+def run_python_file(input_data, directory):
     process = subprocess.run(
-        ["python3", "solution.py"],
+        ["python3", f"{directory}solution.py"],
         input=input_data,
         capture_output=True,
         encoding='utf-8',
@@ -42,9 +42,10 @@ def run_python_file(input_data):
 
 
 def main():
-    current_path = os.getcwd()
-    path_in = f"{current_path}/input"
-    path_out = f"{current_path}/output"
+    local_path = f"{path}/" if path else ''
+    target_path = f"{os.getcwd()}{'/' + path if path else ''}"
+    path_in = f"{target_path}/input"
+    path_out = f"{target_path}/output"
 
     print('━━━━━━━━━━━━━━')
 
@@ -61,7 +62,7 @@ def main():
 
         with open(f"{path_in}/{file}", 'r') as f:
             actual_output = run_cpp_file(
-                f)if mode == 'cpp' else run_python_file(f.read())
+                f, local_path)if mode == 'cpp' else run_python_file(f.read(), local_path)
 
         expected_output = open(
             output_file, 'rt', encoding='utf-8').read().rstrip()
