@@ -17,7 +17,7 @@ jobs:
                   fetch-depth: 0
             - name: Check committed files
               id: check-diff
-              run: bash .github/scripts/diff-check.sh ${{ github.sha }} "$GITHUB_OUTPUT"
+              run: bash .github/scripts/diff-check.sh ${{ github.sha }}
 
     test:
         name: Test solution files
@@ -41,7 +41,7 @@ jobs:
             - name: Test solution files
               run: bash .github/scripts/run-test.sh ${{ github.sha }}
             - name: Commit README files
-              run: bash .github/scripts/commit.sh "$GITHUB_OUTPUT"
+              run: bash .github/scripts/commit.sh
               env:
                   REPOSITORY: ${{ github.repository }}
                   MESSAGE: "Add README files with scoring results"
