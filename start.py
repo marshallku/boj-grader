@@ -23,8 +23,8 @@ def create_folder_if_not_exists(path):
 
 
 def main():
-    # Convert to int just for validating input
     _, system_problem_id, path = sys.argv
+    # Convert to int just for validating input
     problem_id = int(system_problem_id) if system_problem_id else int(
         input("Problem ID: "))
 
