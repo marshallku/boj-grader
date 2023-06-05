@@ -2,6 +2,7 @@
 
 lang='cpp'
 file=''
+output=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -12,6 +13,10 @@ while [[ $# -gt 0 ]]; do
     -f | --file)
         file="$2"
         shift 2
+        ;;
+    -w | --write-output)
+        output=true
+        shift
         ;;
     *)
         echo "Unknown argument: $1"
@@ -67,9 +72,11 @@ if [[ -n "$file" ]]; then
             bash start.sh "$problem_id" "$directory"
         fi
     fi
+else
+    output=false
 fi
 
-python3 test.py "$lang" "$directory"
+python3 test.py "$lang" "$directory" "$output"
 
 if [[ -n "$file" ]]; then
     rm -rf "$directory/input"

@@ -1,8 +1,9 @@
 import sys
 import os
 import subprocess
+import re
 
-_, mode, path = sys.argv
+_, mode, path, output_status = sys.argv
 
 
 def run_cpp_file(input_data, directory):
@@ -46,6 +47,7 @@ def main():
     target_path = f"{os.getcwd()}{'/' + path if path else ''}"
     path_in = f"{target_path}/input"
     path_out = f"{target_path}/output"
+    pass_status = []
 
     print('━━━━━━━━━━━━━━')
 
@@ -72,6 +74,7 @@ def main():
         # Remove previous line
         sys.stdout.write("\033[F")
         print(f"Case {i}: {'PASS' if passed else 'FAIL'}     ")
+        pass_status.append(passed)
 
         if not passed:
             print("expected")
@@ -81,6 +84,26 @@ def main():
 
         print('━━━━━━━━━━━━━━')
         i += 1
+
+    # Write markdown output
+    if output_status == 'true':
+        id_pattern = r'/(\d+)'
+        match_result = re.search(id_pattern, path)
+
+        if not match_result:
+            return
+
+        problem_id = match_result.group(1)
+        markdown_content = f"# Scoring result of [{problem_id}](https://www.acmicpc.net/problem/{problem_id})\n\n| Case | Passed |\n| - | - |"
+        markdown_table = ''
+
+        for i in range(len(pass_status)):
+            markdown_table += f"\n| {i} | {'✅' if pass_status[i] else '❌'} |"
+
+        markdown_path = f"{local_path}README.md"
+
+        with open(markdown_path, "w") as file:
+            file.write(markdown_content + markdown_table + '\n')
 
 
 if __name__ == '__main__':
