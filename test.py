@@ -98,7 +98,7 @@ def main():
         markdown_table = ''
 
         for i in range(len(pass_status)):
-            markdown_table += f"\n| {i} | {'✅' if pass_status[i] else '❌'} |"
+            markdown_table += f"\n| {i + 1} | {'✅' if pass_status[i] else '❌'} |"
 
         markdown_path = f"{local_path}README.md"
 
