@@ -6,14 +6,14 @@ Requirements: gcc, python3
 
 ## Usage
 
-1. Run `./start.sh` and enter the id of the problem to solve.
-    - You can pass the id just in command line like `./start.sh 1000`
+1. Run `./start` and enter the id of the problem to solve.
+    - You can pass the id just in command line like `./start 1000`
     - It removes old test cases and creates new cases.
     - You can add test cases by adding `input/$FILE_NAME` and `output/$FILE_NAME`.
 2. Write your solution in `solution.cpp` or `solution.py`.
-3. Run `./test.sh` to test your code.
+3. Run `./test` to test your code.
     - It tries to run C++ by default.
-    - You can specify language with -l argument like `./test.sh -l cpp(or c++)` or `./test.sh -l py(or python)`
+    - You can specify language with -l argument like `./test -l cpp(or c++)` or `./test -l py(or python)`
 
 ### Adding solution files to github
 
