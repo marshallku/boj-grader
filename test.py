@@ -25,6 +25,23 @@ def format_time(value):
     return f"{value * 1000:.2f} ms"
 
 
+def run_process(args, stdin):
+    start_time = time.time()
+    process = subprocess.Popen(
+        args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    elapsed_time = time.time() - start_time
+    subprocess_process = psutil.Process(process.pid)
+    memory_usage = subprocess_process.memory_info().rss
+    output, runtime_errors = process.communicate()
+
+    if runtime_errors:
+        print("Runtime Error:")
+        print(runtime_errors.decode('utf-8'))
+        return [None, elapsed_time, memory_usage]
+
+    return [output.decode('utf-8').rstrip(), elapsed_time, memory_usage]
+
+
 def run_cpp_file(input_data, directory):
     output_file = f"{directory}tmp.out"
     build_process = subprocess.Popen(
@@ -36,44 +53,17 @@ def run_cpp_file(input_data, directory):
         print(compile_errors.decode('utf-8'))
         return None
 
-    start_time = time.time()
-    process = subprocess.Popen(
-        [f"./{output_file}"], stdin=input_data, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    elapsed_time = time.time() - start_time
-    subprocess_process = psutil.Process(process.pid)
-    memory_usage = subprocess_process.memory_info().rss
-    output, runtime_errors = process.communicate()
+    result = run_process([f"./{output_file}"], input_data)
 
     os.remove(output_file)
 
-    if runtime_errors:
-        print("Runtime Error:")
-        print(runtime_errors.decode('utf-8'))
-        return [None, elapsed_time, memory_usage]
-
-    return [output.decode('utf-8').rstrip(), elapsed_time, memory_usage]
+    return result
 
 
 def run_python_file(input_data, directory):
-    start_time = time.time()
-    process = subprocess.Popen(
-        ["python3", f"{directory}solution.py"],
-        stdin=input_data,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    pid = process.pid
-    elapsed_time = time.time() - start_time
-    subprocess_process = psutil.Process(pid)
-    memory_usage = subprocess_process.memory_info().rss
-    output, runtime_errors = process.communicate()
+    result = run_process(["python3", f"{directory}solution.py"], input_data)
 
-    if runtime_errors:
-        print("Runtime Error:")
-        print(runtime_errors.decode('utf-8'))
-        return [None, elapsed_time, memory_usage]
-
-    return [output.decode('utf-8').rstrip(), elapsed_time, memory_usage]
+    return result
 
 
 def main():
