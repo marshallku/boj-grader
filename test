@@ -69,7 +69,7 @@ if [[ -n "$file" ]]; then
 
         if [[ -n "$problem_id" ]] && [ ! -e "$input_file" ] || [ ! -e "$output_file" ]; then
             echo "Fetching test cases for $problem_id..."
-            bash start.sh "$problem_id" "$directory"
+            bash start "$problem_id" "$directory"
         fi
     fi
 else
