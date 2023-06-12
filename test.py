@@ -26,6 +26,19 @@ def format_time(value: float):
     return f"{value * 1000:.2f} ms"
 
 
+def build_result(communicate: tuple[bytes, bytes], memory_usage: float, elapsed_time: float):
+    output, error = communicate
+
+    result = {
+        "output": error.decode('utf-8').replace("\n", "<br />").replace('|', '\\|') if error else output.decode('utf-8').rstrip(),
+        "success": False if error else True,
+        "memory_usage": memory_usage,
+        "elapsed_time": elapsed_time
+    }
+
+    return result
+
+
 def run_process(args: list[str], stdin: io.TextIOWrapper):
     start_time = time.time()
     process = subprocess.Popen(
@@ -38,21 +51,20 @@ def run_process(args: list[str], stdin: io.TextIOWrapper):
     if runtime_errors:
         print("Runtime Error:")
         print(runtime_errors.decode('utf-8'))
-        return [None, elapsed_time, memory_usage]
 
-    return [output.decode('utf-8').rstrip(), elapsed_time, memory_usage]
+    return build_result((output, runtime_errors), memory_usage, elapsed_time)
 
 
 def run_cpp_file(input_data: io.TextIOWrapper, directory: str):
     output_file = f"{directory}tmp.out"
     build_process = subprocess.Popen(
         ['g++', f"{directory}solution.cpp", '-o', output_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    _, compile_errors = build_process.communicate()
+    compile_output, compile_errors = build_process.communicate()
 
     if compile_errors:
         print("Compilation Error:")
         print(compile_errors.decode('utf-8'))
-        return None
+        return build_result((compile_output, compile_errors), 0, 0)
 
     result = run_process([f"./{output_file}"], input_data)
 
@@ -88,24 +100,27 @@ def main():
         print(f"Running case {i}...")
 
         with open(f"{path_in}/{file}", 'r') as f:
-            actual_output, elapsed_time, memory_usage = run_cpp_file(
+            result = run_cpp_file(
                 f, local_path)if mode == 'cpp' else run_python_file(f, local_path)
 
         expected_output = open(
             output_file, 'rt', encoding='utf-8').read().rstrip()
 
-        passed = actual_output == expected_output
+        passed = result['output'] == expected_output
 
         # Remove previous line
-        sys.stdout.write("\033[F")
-        print(f"Case {i}: {'PASS' if passed else 'FAIL'}     ")
-        scoring_status.append([passed, elapsed_time, memory_usage])
+        if result['success']:
+            sys.stdout.write("\033[F")
+            print(f"Case {i}: {'PASS' if passed else 'FAIL'}     ")
 
-        if not passed and actual_output is not None:
+        result['passed'] = passed
+        scoring_status.append(result)
+
+        if not passed and result['success']:
             print("expected")
             print(expected_output)
             print("but got")
-            print(actual_output)
+            print(result['output'])
 
         print('━━━━━━━━━━━━━━')
         i += 1
@@ -119,12 +134,18 @@ def main():
             return
 
         problem_id = match_result.group(1)
-        markdown_content = f"# Scoring result of [{problem_id}](https://www.acmicpc.net/problem/{problem_id})\n\nLanguage: {mode}\n\n| Case | Passed | Elapsed Time | Memory Usage |\n| - | - | - | - |"
+        markdown_content = f"# Scoring result of [{problem_id}](https://www.acmicpc.net/problem/{problem_id})\n\nLanguage: {mode}\n\n| Case | Passed | Elapsed Time | Memory Usage | Notes |\n| - | - | - | - | - |"
         markdown_table = ''
 
         for i in range(len(scoring_status)):
-            passed, elapsed_time, memory_usage = scoring_status[i]
-            markdown_table += f"\n| {i + 1} | {'✅' if scoring_status[i] else '❌'} | {format_time(elapsed_time)} | {format_bytes(memory_usage)} |"
+            result = scoring_status[i]
+
+            # Compile / Runtime error has occurred
+            if not result['success']:
+                markdown_table += f"\n| {i + 1} | ❌ | - | - | {result['output']} |"
+                continue
+
+            markdown_table += f"\n| {i + 1} | {'✅' if result['passed'] else '❌'} | {format_time(result['elapsed_time'])} | {format_bytes(result['memory_usage'])} | - |"
 
         markdown_path = f"{local_path}README.md"
 
