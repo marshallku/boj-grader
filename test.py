@@ -1,4 +1,5 @@
 import sys
+import io
 import os
 import subprocess
 import re
@@ -8,7 +9,7 @@ import psutil
 _, mode, path, output_status = sys.argv
 
 
-def format_bytes(value):
+def format_bytes(value: float):
     kilo_byte = 1e+3
     mega_byte = 1e+6
 
@@ -21,11 +22,11 @@ def format_bytes(value):
     return f"{value:.0f} B"
 
 
-def format_time(value):
+def format_time(value: float):
     return f"{value * 1000:.2f} ms"
 
 
-def run_process(args, stdin):
+def run_process(args: list[str], stdin: io.TextIOWrapper):
     start_time = time.time()
     process = subprocess.Popen(
         args, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -42,7 +43,7 @@ def run_process(args, stdin):
     return [output.decode('utf-8').rstrip(), elapsed_time, memory_usage]
 
 
-def run_cpp_file(input_data, directory):
+def run_cpp_file(input_data: io.TextIOWrapper, directory: str):
     output_file = f"{directory}tmp.out"
     build_process = subprocess.Popen(
         ['g++', f"{directory}solution.cpp", '-o', output_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -60,7 +61,7 @@ def run_cpp_file(input_data, directory):
     return result
 
 
-def run_python_file(input_data, directory):
+def run_python_file(input_data: io.TextIOWrapper, directory: str):
     result = run_process(["python3", f"{directory}solution.py"], input_data)
 
     return result
