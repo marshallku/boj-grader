@@ -76,7 +76,7 @@ else
     output=false
 fi
 
-python3 test.py "$lang" "$directory" "$output"
+python3 src/python/test.py "$lang" "$directory" "$output"
 
 if [[ -n "$file" ]]; then
     rm -rf "$directory/input"
