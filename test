@@ -41,6 +41,28 @@ if [[ -n "$file" ]]; then
         exit 5
         ;;
     esac
+else
+    # Check language automatically with checking files
+    python_file_exists=false
+    cpp_file_exists=false
+
+    if test -f 'solution.py'; then
+        python_file_exists=true
+        lang='python'
+    fi
+
+    if test -f 'solution.cpp'; then
+        cpp_file_exists=true
+        lang='cpp'
+    fi
+
+    if [ "$python_file_exists" == 'true' ] && [ "$cpp_file_exists" == 'true' ]; then
+        source './src/utils/select.sh'
+        select_message='Which language will you test?'
+        options=('c++' 'python')
+        select_options
+        lang="${options[$selected]}"
+    fi
 fi
 
 case $lang in
